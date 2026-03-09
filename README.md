@@ -4,9 +4,9 @@ Custom integration for Home Assistant that fetches operational data from `https:
 
 ## Exposed entities
 
-- **Binary sensor**: `Active warning`
-- **Sensor**: `Traffic messages` with per-line details in attributes
-- **Sensor**: `Installation outages` with per-station outage details in attributes
+- **Sensor**: `M1/M2 message` with current message for lines M1/M2
+- **Sensor**: `M3/M4 message` with current message for lines M3/M4
+- **Sensor**: `Elevator outages` with per-station outage details in attributes
 
 ## Installation
 
