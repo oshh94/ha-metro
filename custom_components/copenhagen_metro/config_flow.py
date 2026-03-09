@@ -1,4 +1,4 @@
-"""Config flow for Danish Metro integration."""
+"""Config flow for Copenhagen Metro integration."""
 
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ from homeassistant.data_entry_flow import FlowResult
 from .const import DOMAIN
 
 
-class DanishMetroConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Danish Metro."""
+class CopenhagenMetroConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+    """Handle a config flow for Copenhagen Metro."""
 
     VERSION = 1
 
@@ -18,7 +18,7 @@ class DanishMetroConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if self._async_current_entries():
             return self.async_abort(reason="single_instance_allowed")
 
-        return self.async_create_entry(title="Danish Metro", data={})
+        return self.async_create_entry(title="Copenhagen Metro", data={})
 
     async def async_step_import(self, user_input=None) -> FlowResult:
         """Handle import from configuration.yaml."""

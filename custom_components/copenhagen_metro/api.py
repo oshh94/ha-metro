@@ -1,4 +1,4 @@
-"""API client for Danish Metro operational data."""
+"""API client for Copenhagen Metro operational data."""
 
 from __future__ import annotations
 
@@ -11,20 +11,20 @@ import aiohttp
 from .const import API_URL
 
 
-class DanishMetroApiClientError(Exception):
+class CopenhagenMetroApiClientError(Exception):
     """Exception to indicate a general API error."""
 
 
-class DanishMetroApiClientCommunicationError(DanishMetroApiClientError):
+class CopenhagenMetroApiClientCommunicationError(CopenhagenMetroApiClientError):
     """Exception to indicate a communication error."""
 
 
-class DanishMetroApiClientAuthenticationError(DanishMetroApiClientError):
+class CopenhagenMetroApiClientAuthenticationError(CopenhagenMetroApiClientError):
     """Exception to indicate an authentication error."""
 
 
-class DanishMetroApiClient:
-    """API client for the Danish Metro operations data endpoint."""
+class CopenhagenMetroApiClient:
+    """API client for the Copenhagen Metro operations data endpoint."""
 
     def __init__(self, session: aiohttp.ClientSession) -> None:
         """Initialize the API client."""
@@ -42,14 +42,14 @@ class DanishMetroApiClient:
                 response.raise_for_status()
                 return await response.json()  # type: ignore[no-any-return]
         except asyncio.TimeoutError as exception:
-            raise DanishMetroApiClientCommunicationError(
+            raise CopenhagenMetroApiClientCommunicationError(
                 "Timeout error fetching information"
             ) from exception
         except (aiohttp.ClientError, socket.gaierror) as exception:
-            raise DanishMetroApiClientCommunicationError(
+            raise CopenhagenMetroApiClientCommunicationError(
                 "Error fetching information"
             ) from exception
         except Exception as exception:
-            raise DanishMetroApiClientError(
+            raise CopenhagenMetroApiClientError(
                 "Something really wrong happened!"
             ) from exception

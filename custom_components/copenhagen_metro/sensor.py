@@ -1,4 +1,4 @@
-"""Sensor platform for Danish Metro traffic information."""
+"""Sensor platform for Copenhagen Metro traffic information."""
 
 from __future__ import annotations
 
@@ -8,22 +8,22 @@ from homeassistant.components.sensor import SensorEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .coordinator import DanishMetroDataUpdateCoordinator
-from .data import DanishMetroConfigEntry
-from .entity import DanishMetroEntity
+from .coordinator import CopenhagenMetroDataUpdateCoordinator
+from .data import CopenhagenMetroConfigEntry
+from .entity import CopenhagenMetroEntity
 
 
-class DanishMetroLineMessageSensor(DanishMetroEntity, SensorEntity):
+class CopenhagenMetroLineMessageSensor(CopenhagenMetroEntity, SensorEntity):
     """Sensor containing current traffic message for a metro line group."""
 
     _attr_icon = "mdi:train"
 
-    def __init__(self, coordinator: DanishMetroDataUpdateCoordinator, line_group: str) -> None:
+    def __init__(self, coordinator: CopenhagenMetroDataUpdateCoordinator, line_group: str) -> None:
         """Initialize the line message sensor."""
         super().__init__(coordinator)
         self._line_group = line_group
         self._attr_name = f"{line_group} message"
-        self._attr_unique_id = f"danish_metro_message_{line_group.lower().replace('/', '_')}"
+        self._attr_unique_id = f"copenhagen_metro_message_{line_group.lower().replace('/', '_')}"
 
     def _line_messages(self) -> list[dict[str, Any]]:
         """Return active messages for the configured line group."""
@@ -65,11 +65,11 @@ class DanishMetroLineMessageSensor(DanishMetroEntity, SensorEntity):
         }
 
 
-class DanishMetroElevatorOutagesSensor(DanishMetroEntity, SensorEntity):
+class CopenhagenMetroElevatorOutagesSensor(CopenhagenMetroEntity, SensorEntity):
     """Sensor containing current elevator outages."""
 
     _attr_name = "Elevator outages"
-    _attr_unique_id = "danish_metro_elevator_outages"
+    _attr_unique_id = "copenhagen_metro_elevator_outages"
     _attr_icon = "mdi:elevator"
 
     @property
@@ -94,16 +94,16 @@ class DanishMetroElevatorOutagesSensor(DanishMetroEntity, SensorEntity):
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: DanishMetroConfigEntry,
+    entry: CopenhagenMetroConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up Danish Metro sensors from a config entry."""
-    coordinator: DanishMetroDataUpdateCoordinator = entry.runtime_data.coordinator
+    """Set up Copenhagen Metro sensors from a config entry."""
+    coordinator: CopenhagenMetroDataUpdateCoordinator = entry.runtime_data.coordinator
 
     async_add_entities(
         [
-            DanishMetroLineMessageSensor(coordinator, "M1/M2"),
-            DanishMetroLineMessageSensor(coordinator, "M3/M4"),
-            DanishMetroElevatorOutagesSensor(coordinator),
+            CopenhagenMetroLineMessageSensor(coordinator, "M1/M2"),
+            CopenhagenMetroLineMessageSensor(coordinator, "M3/M4"),
+            CopenhagenMetroElevatorOutagesSensor(coordinator),
         ]
     )

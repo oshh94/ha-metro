@@ -1,4 +1,4 @@
-"""DataUpdateCoordinator for Danish Metro operational data."""
+"""DataUpdateCoordinator for Copenhagen Metro operational data."""
 
 from __future__ import annotations
 
@@ -10,26 +10,26 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import (
-    DanishMetroApiClient,
-    DanishMetroApiClientAuthenticationError,
-    DanishMetroApiClientError,
+    CopenhagenMetroApiClient,
+    CopenhagenMetroApiClientAuthenticationError,
+    CopenhagenMetroApiClientError,
 )
 from .const import DOMAIN, LOGGER, SCAN_INTERVAL_SECONDS
 
 if TYPE_CHECKING:
-    from .data import DanishMetroConfigEntry
+    from .data import CopenhagenMetroConfigEntry
 
 
-class DanishMetroDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
-    """Class to manage fetching Danish Metro API data."""
+class CopenhagenMetroDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
+    """Class to manage fetching Copenhagen Metro API data."""
 
-    config_entry: DanishMetroConfigEntry
+    config_entry: CopenhagenMetroConfigEntry
 
     def __init__(
         self,
         hass: HomeAssistant,
-        client: DanishMetroApiClient,
-        config_entry: DanishMetroConfigEntry,
+        client: CopenhagenMetroApiClient,
+        config_entry: CopenhagenMetroConfigEntry,
     ) -> None:
         """Initialize coordinator."""
         super().__init__(
@@ -45,9 +45,9 @@ class DanishMetroDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         """Fetch data from API endpoint."""
         try:
             payload = await self.client.async_get_data()
-        except DanishMetroApiClientAuthenticationError as err:
+        except CopenhagenMetroApiClientAuthenticationError as err:
             raise ConfigEntryAuthFailed from err
-        except DanishMetroApiClientError as err:
+        except CopenhagenMetroApiClientError as err:
             raise UpdateFailed(f"Error communicating with API: {err}") from err
 
         return {

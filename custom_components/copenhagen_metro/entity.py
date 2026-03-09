@@ -1,4 +1,4 @@
-"""Base entity for the Danish Metro integration."""
+"""Base entity for the Copenhagen Metro integration."""
 
 from __future__ import annotations
 
@@ -6,16 +6,16 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import ATTRIBUTION, DOMAIN
-from .coordinator import DanishMetroDataUpdateCoordinator
+from .coordinator import CopenhagenMetroDataUpdateCoordinator
 
 
-class DanishMetroEntity(CoordinatorEntity[DanishMetroDataUpdateCoordinator]):
-    """Base class for Danish Metro entities."""
+class CopenhagenMetroEntity(CoordinatorEntity[CopenhagenMetroDataUpdateCoordinator]):
+    """Base class for Copenhagen Metro entities."""
 
     _attr_attribution = ATTRIBUTION
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator: DanishMetroDataUpdateCoordinator) -> None:
+    def __init__(self, coordinator: CopenhagenMetroDataUpdateCoordinator) -> None:
         """Initialize the entity."""
         super().__init__(coordinator)
         self._attr_device_info = DeviceInfo(

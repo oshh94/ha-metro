@@ -1,4 +1,4 @@
-# Danish Metro Home Assistant Integration
+# Copenhagen Metro Home Assistant Integration
 
 Custom integration for Home Assistant that fetches operational data from `https://m.dk/api/operationsdata/`.
 
@@ -14,17 +14,17 @@ Custom integration for Home Assistant that fetches operational data from `https:
 
 1. Open **HACS → Integrations → ⋮ (menu) → Custom repositories**.
 2. Add this repository URL and set category to **Integration**.
-3. Search for **Danish Metro** in HACS and install it.
+3. Search for **Copenhagen Metro** in HACS and install it.
 4. Restart Home Assistant.
 
 ### Option 2: Manual
 
-1. Copy `custom_components/danish_metro` to your Home Assistant `custom_components` directory.
+1. Copy `custom_components/copenhagen_metro` to your Home Assistant `custom_components` directory.
 2. Restart Home Assistant.
 
 ## Configuration
 
-Add the integration through **Settings → Devices & Services → Add Integration → Danish Metro**.
+Add the integration through **Settings → Devices & Services → Add Integration → Copenhagen Metro**.
 
 ## Disclaimer
 

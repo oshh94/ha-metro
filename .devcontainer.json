@@ -1,5 +1,5 @@
 {
-    "name": "Danish Metro Integration",
+    "name": "Copenhagen Metro Integration",
     "image": "mcr.microsoft.com/devcontainers/python:3.13",
     "postCreateCommand": "scripts/setup",
     "forwardPorts": [
