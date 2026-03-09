@@ -2,39 +2,52 @@
 
 from __future__ import annotations
 
-import logging
 from datetime import timedelta
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import API_URL, DOMAIN, SCAN_INTERVAL_SECONDS
+from .api import (
+    DanishMetroApiClient,
+    DanishMetroApiClientAuthenticationError,
+    DanishMetroApiClientError,
+)
+from .const import DOMAIN, LOGGER, SCAN_INTERVAL_SECONDS
 
-_LOGGER = logging.getLogger(__name__)
+if TYPE_CHECKING:
+    from .data import DanishMetroConfigEntry
 
 
 class DanishMetroDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     """Class to manage fetching Danish Metro API data."""
 
-    def __init__(self, hass: HomeAssistant) -> None:
+    config_entry: DanishMetroConfigEntry
+
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        client: DanishMetroApiClient,
+        config_entry: DanishMetroConfigEntry,
+    ) -> None:
         """Initialize coordinator."""
         super().__init__(
             hass,
-            logger=_LOGGER,
+            logger=LOGGER,
             name=DOMAIN,
             update_interval=timedelta(seconds=SCAN_INTERVAL_SECONDS),
+            config_entry=config_entry,
         )
-        self._session = async_get_clientsession(hass)
+        self.client = client
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from API endpoint."""
         try:
-            response = await self._session.get(API_URL, timeout=15)
-            response.raise_for_status()
-            payload: dict[str, Any] = await response.json()
-        except Exception as err:  # broad by design to surface update failures in HA
+            payload = await self.client.async_get_data()
+        except DanishMetroApiClientAuthenticationError as err:
+            raise ConfigEntryAuthFailed from err
+        except DanishMetroApiClientError as err:
             raise UpdateFailed(f"Error communicating with API: {err}") from err
 
         return {

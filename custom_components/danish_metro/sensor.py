@@ -5,23 +5,15 @@ from __future__ import annotations
 from typing import Any
 
 from homeassistant.components.sensor import SensorEntity
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import ATTRIBUTION, DOMAIN
 from .coordinator import DanishMetroDataUpdateCoordinator
+from .data import DanishMetroConfigEntry
+from .entity import DanishMetroEntity
 
 
-class DanishMetroCoordinatorEntity(CoordinatorEntity[DanishMetroDataUpdateCoordinator]):
-    """Base entity for Danish Metro entities."""
-
-    _attr_attribution = ATTRIBUTION
-    _attr_has_entity_name = True
-
-
-class DanishMetroLineMessageSensor(DanishMetroCoordinatorEntity, SensorEntity):
+class DanishMetroLineMessageSensor(DanishMetroEntity, SensorEntity):
     """Sensor containing current traffic message for a metro line group."""
 
     _attr_icon = "mdi:train"
@@ -73,7 +65,7 @@ class DanishMetroLineMessageSensor(DanishMetroCoordinatorEntity, SensorEntity):
         }
 
 
-class DanishMetroElevatorOutagesSensor(DanishMetroCoordinatorEntity, SensorEntity):
+class DanishMetroElevatorOutagesSensor(DanishMetroEntity, SensorEntity):
     """Sensor containing current elevator outages."""
 
     _attr_name = "Elevator outages"
@@ -96,19 +88,17 @@ class DanishMetroElevatorOutagesSensor(DanishMetroCoordinatorEntity, SensorEntit
                 status = str(item.get("statusMessage", "")).strip()
                 if status:
                     messages.append(status)
-
             stations.append({"station_name": station_name, "messages": messages})
-
         return {"stations": stations}
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: DanishMetroConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Danish Metro sensors from a config entry."""
-    coordinator: DanishMetroDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: DanishMetroDataUpdateCoordinator = entry.runtime_data.coordinator
 
     async_add_entities(
         [
