@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -11,6 +13,18 @@ from .coordinator import CopenhagenMetroDataUpdateCoordinator
 from .data import CopenhagenMetroConfigEntry, CopenhagenMetroData
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
+
+_BRAND_URL = "/copenhagen_metro/brand"
+
+
+async def async_setup(hass: HomeAssistant, config: dict) -> bool:
+    """Register static path for brand images once per HA session."""
+    hass.http.register_static_path(
+        _BRAND_URL,
+        str(Path(__file__).parent / "brand"),
+        cache_headers=True,
+    )
+    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: CopenhagenMetroConfigEntry) -> bool:

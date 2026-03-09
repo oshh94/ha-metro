@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -13,28 +14,60 @@ from .data import CopenhagenMetroConfigEntry
 from .entity import CopenhagenMetroEntity
 
 
+@dataclass(frozen=True, kw_only=True)
+class CopenhagenMetroLineSensorDescription(SensorEntityDescription):
+    """Describes a Copenhagen Metro line message sensor."""
+
+    line_group: str = ""
+    entity_picture: str | None = None
+
+
+LINE_SENSOR_DESCRIPTIONS: tuple[CopenhagenMetroLineSensorDescription, ...] = (
+    CopenhagenMetroLineSensorDescription(
+        key="m1_m2_message",
+        name="M1/M2 message",
+        icon="mdi:train",
+        line_group="M1/M2",
+        entity_picture="/copenhagen_metro/brand/m1_m2_icon.png",
+    ),
+    CopenhagenMetroLineSensorDescription(
+        key="m3_m4_message",
+        name="M3/M4 message",
+        icon="mdi:subway-variant",
+        line_group="M3/M4",
+        entity_picture="/copenhagen_metro/brand/m3_m4_icon.png",
+    ),
+)
+
+ELEVATOR_DESCRIPTION = SensorEntityDescription(
+    key="elevator_outages",
+    name="Elevator outages",
+    icon="mdi:elevator",
+)
+
+
 class CopenhagenMetroLineMessageSensor(CopenhagenMetroEntity, SensorEntity):
     """Sensor containing current traffic message for a metro line group."""
 
-    _LINE_ICONS: dict[str, str] = {
-        "M1/M2": "/api/brands/integration/copenhagen_metro/m1_m2_icon.png",
-        "M3/M4": "/api/brands/integration/copenhagen_metro/m3_m4_icon.png",
-    }
+    entity_description: CopenhagenMetroLineSensorDescription
 
-    def __init__(self, coordinator: CopenhagenMetroDataUpdateCoordinator, line_group: str) -> None:
+    def __init__(
+        self,
+        coordinator: CopenhagenMetroDataUpdateCoordinator,
+        description: CopenhagenMetroLineSensorDescription,
+    ) -> None:
         """Initialize the line message sensor."""
         super().__init__(coordinator)
-        self._line_group = line_group
-        self._attr_name = f"{line_group} message"
-        self._attr_unique_id = f"copenhagen_metro_message_{line_group.lower().replace('/', '_')}"
-        self._attr_entity_picture = self._LINE_ICONS.get(line_group)
+        self.entity_description = description
+        self._attr_unique_id = f"copenhagen_metro_{description.key}"
+        self._attr_entity_picture = description.entity_picture
 
     def _line_messages(self) -> list[dict[str, Any]]:
         """Return active messages for the configured line group."""
         messages: list[dict[str, Any]] = []
         for message in self.coordinator.data.get("active_messages", []):
             setup = message.get("lineSetup") or {}
-            if str(setup.get("lineGroup", "")).strip() != self._line_group:
+            if str(setup.get("lineGroup", "")).strip() != self.entity_description.line_group:
                 continue
             messages.append(message)
         return messages
@@ -45,7 +78,6 @@ class CopenhagenMetroLineMessageSensor(CopenhagenMetroEntity, SensorEntity):
         messages = self._line_messages()
         if not messages:
             return "No current message"
-
         latest_message = str(messages[0].get("name", "")).strip()
         return latest_message or "No current message"
 
@@ -61,9 +93,8 @@ class CopenhagenMetroLineMessageSensor(CopenhagenMetroEntity, SensorEntity):
                     "is_clear_message": bool(message.get("isClearMessage", False)),
                 }
             )
-
         return {
-            "line_group": self._line_group,
+            "line_group": self.entity_description.line_group,
             "message_count": len(messages),
             "messages": messages,
         }
@@ -72,9 +103,15 @@ class CopenhagenMetroLineMessageSensor(CopenhagenMetroEntity, SensorEntity):
 class CopenhagenMetroElevatorOutagesSensor(CopenhagenMetroEntity, SensorEntity):
     """Sensor containing current elevator outages."""
 
-    _attr_name = "Elevator outages"
-    _attr_unique_id = "copenhagen_metro_elevator_outages"
-    _attr_icon = "mdi:elevator"
+    def __init__(
+        self,
+        coordinator: CopenhagenMetroDataUpdateCoordinator,
+        description: SensorEntityDescription,
+    ) -> None:
+        """Initialize the elevator outages sensor."""
+        super().__init__(coordinator)
+        self.entity_description = description
+        self._attr_unique_id = f"copenhagen_metro_{description.key}"
 
     @property
     def native_value(self) -> int:
@@ -97,6 +134,7 @@ class CopenhagenMetroElevatorOutagesSensor(CopenhagenMetroEntity, SensorEntity):
 
 
 async def async_setup_entry(
+    hass: HomeAssistant,
     entry: CopenhagenMetroConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
@@ -105,8 +143,10 @@ async def async_setup_entry(
 
     async_add_entities(
         [
-            CopenhagenMetroLineMessageSensor(coordinator, "M1/M2"),
-            CopenhagenMetroLineMessageSensor(coordinator, "M3/M4"),
-            CopenhagenMetroElevatorOutagesSensor(coordinator),
+            *(
+                CopenhagenMetroLineMessageSensor(coordinator, description)
+                for description in LINE_SENSOR_DESCRIPTIONS
+            ),
+            CopenhagenMetroElevatorOutagesSensor(coordinator, ELEVATOR_DESCRIPTION),
         ]
     )
