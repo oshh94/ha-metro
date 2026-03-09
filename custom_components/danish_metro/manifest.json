@@ -1,0 +1,11 @@
+{
+  "domain": "danish_metro",
+  "name": "Danish Metro",
+  "codeowners": [],
+  "config_flow": true,
+  "documentation": "https://github.com/",
+  "iot_class": "cloud_polling",
+  "loggers": ["custom_components.danish_metro"],
+  "requirements": [],
+  "version": "0.1.0"
+}
