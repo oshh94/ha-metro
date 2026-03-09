@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Københavns Metro",
+        "description": "Tilføj sensorer med trafikinformation fra Københavns Metro"
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Der kan kun tilføjes én instans af Københavns Metro."
+    }
+  }
+}

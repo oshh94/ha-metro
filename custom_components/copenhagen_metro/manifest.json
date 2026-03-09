@@ -1,0 +1,12 @@
+{
+  "domain": "copenhagen_metro",
+  "name": "Copenhagen Metro",
+  "codeowners": ["@oshh94"],
+  "config_flow": true,
+  "documentation": "https://github.com/oshh94/ha-metro",
+  "issue_tracker": "https://github.com/oshh94/ha-metro/issues",
+  "iot_class": "cloud_polling",
+  "loggers": ["custom_components.copenhagen_metro"],
+  "requirements": [],
+  "version": "0.1.0"
+}
