@@ -16,7 +16,10 @@ from .entity import CopenhagenMetroEntity
 class CopenhagenMetroLineMessageSensor(CopenhagenMetroEntity, SensorEntity):
     """Sensor containing current traffic message for a metro line group."""
 
-    _attr_icon = "mdi:train"
+    _LINE_ICONS: dict[str, str] = {
+        "M1/M2": "/api/brands/integration/copenhagen_metro/m1_m2_icon.png",
+        "M3/M4": "/api/brands/integration/copenhagen_metro/m3_m4_icon.png",
+    }
 
     def __init__(self, coordinator: CopenhagenMetroDataUpdateCoordinator, line_group: str) -> None:
         """Initialize the line message sensor."""
@@ -24,6 +27,7 @@ class CopenhagenMetroLineMessageSensor(CopenhagenMetroEntity, SensorEntity):
         self._line_group = line_group
         self._attr_name = f"{line_group} message"
         self._attr_unique_id = f"copenhagen_metro_message_{line_group.lower().replace('/', '_')}"
+        self._attr_entity_picture = self._LINE_ICONS.get(line_group)
 
     def _line_messages(self) -> list[dict[str, Any]]:
         """Return active messages for the configured line group."""
@@ -93,7 +97,6 @@ class CopenhagenMetroElevatorOutagesSensor(CopenhagenMetroEntity, SensorEntity):
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,
     entry: CopenhagenMetroConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
