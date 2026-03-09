@@ -38,7 +38,6 @@ class DanishMetroDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             raise UpdateFailed(f"Error communicating with API: {err}") from err
 
         return {
-            "active_warning": bool(payload.get("activeWarning", False)),
             "active_messages": payload.get("activeMessages", []),
             "installations": payload.get("installations", []),
         }
