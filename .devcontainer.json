@@ -49,7 +49,7 @@
       "packages": "ffmpeg,libturbojpeg0,libpcap-dev"
     },
     "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {},
-    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers/features/node:2": {},
     "ghcr.io/anthropics/devcontainer-features/claude-code:1.0.5": {}
   }
 }
